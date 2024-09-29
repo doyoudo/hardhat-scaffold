@@ -19,6 +19,9 @@ jobs:
     - name: 检查 npm 版本
       run: npm --version
     
+    - name: 显示 package.json 内容
+     run: cat package.json
+     
     - name: 安装依赖
       run: npm ci
     
