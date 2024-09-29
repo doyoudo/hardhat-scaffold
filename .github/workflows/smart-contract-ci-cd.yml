@@ -2,9 +2,9 @@ name: 智能合约 CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]  # 将 'main' 改为 'master'
   pull_request:
-    branches: [ main ]
+    branches: [ master ]  # 将 'main' 改为 'master'
 
 jobs:
   test-and-deploy:
@@ -35,14 +35,14 @@ jobs:
       run: npx hardhat test --gas-reporter
     
     - name: 部署到 Sepolia 测试网
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'  # 将 'main' 改为 'master'
       env:
         SEPOLIA_URL: ${{ secrets.SEPOLIA_URL }}
         PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       run: npx hardhat run scripts/deploy.js --network sepolia
 
     - name: 验证合约
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'  # 将 'main' 改为 'master'
       env:
         ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
       run: npx hardhat verify --network sepolia DEPLOYED_CONTRACT_ADDRESS
