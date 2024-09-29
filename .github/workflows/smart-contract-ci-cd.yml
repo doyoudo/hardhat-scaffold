@@ -1,0 +1,48 @@
+name: 智能合约 CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: 使用 Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    
+    - name: 安装依赖
+      run: npm ci
+    
+    - name: 运行合约测试
+      run: npx hardhat test
+    
+    - name: 运行覆盖率测试
+      run: npx hardhat coverage
+    
+    - name: 运行 Slither 安全分析
+      uses: crytic/slither-action@v0.1.1
+    
+    - name: 运行 Solhint 代码质量检查
+      run: npx solhint 'contracts/**/*.sol'
+    
+    - name: 运行 Gas 报告
+      run: npx hardhat test --gas-reporter
+    
+    - name: 部署到 Sepolia 测试网
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      env:
+        SEPOLIA_URL: ${{ secrets.SEPOLIA_URL }}
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      run: npx hardhat run scripts/deploy.js --network sepolia
+
+    - name: 验证合约
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      env:
+        ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+      run: npx hardhat verify --network sepolia DEPLOYED_CONTRACT_ADDRESS

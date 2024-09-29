@@ -1,5 +1,8 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
+require("@nomicfoundation/hardhat-verify");
+require("solidity-coverage");
+require("hardhat-gas-reporter");
 
 // 加载自定义任务
 [
@@ -23,5 +26,10 @@ module.exports = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY
+  },
+  gasReporter: {
+    enabled: true,
+    currency: 'USD',
+    coinmarketcap: process.env.COINMARKETCAP_API_KEY,
   },
 };
