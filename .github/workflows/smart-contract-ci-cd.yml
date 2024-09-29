@@ -12,9 +12,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: 使用 Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
-        node-version: '14'
+        node-version: '18'
+    
+    - name: 检查 npm 版本
+      run: npm --version
     
     - name: 安装依赖
       run: npm ci
